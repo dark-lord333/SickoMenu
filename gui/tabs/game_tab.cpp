@@ -5,6 +5,28 @@
 #include "utility.h"
 #include "state.hpp"
 #include "logger.h"
+#include "gui-helpers.cpp" 
+#include "imgui.h"
+
+
+bool enableSpellCheck = false;
+
+
+void RenderGameTab() {
+  
+    if (ToggleButton("Spell Check", &enableSpellCheck)) {
+        
+    }
+
+    
+    std::string chatMessage = "Ths is a smaple text with sme misspelled wrds.";
+
+    if (enableSpellCheck) {
+        HighlightMisspelledWords(chatMessage);
+    } else {
+        ImGui::Text("%s", chatMessage.c_str());
+    }
+}
 
 namespace GameTab {
     enum Groups {
