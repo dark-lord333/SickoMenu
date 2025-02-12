@@ -6,6 +6,62 @@
 #include "logger.h"
 #include "DirectX.h"
 #include <DirectX.h>
+*#include <hunspell/hunspell.hxx>
+#include <sstream>
+#include <string>
+#include "imgui.h"
+
+
+extern bool enableSpellCheck;
+
+ {
+public:
+    SpellChecker(const std::string& affPath, const std::string& dicPath) {
+        spell = new Hunspell(affPath.c_str(), dicPath.c_str());
+
+        if (!spell) {
+            throw std::runtime_error("Error !");
+        }
+    }
+
+    ~SpellChecker() {
+        delete spell;
+    }
+
+    bool isCorrect(const std::string& word) {
+        return spell->spell(word.c_str()) != 0;
+    }
+
+    std::string getSuggestion(const std::string& word) {
+        if (isCorrect(word)) return word; 
+
+        char** suggestions;
+        int num_suggestions = spell->suggest(&suggestions, word.c_str());
+
+        if (num_suggestions > 0) {
+            std::string corrected = suggestions[0];
+            spell->free_list(&suggestions, num_suggestions);
+            return corrected; 
+        }
+
+        return word; 
+    }
+
+private:
+    Hunspell* spell;
+};
+
+
+SpellChecker spellChecker("en_US.aff", "en_US.dic");
+
+
+void HighlightMisspelledWords(const std::string& text) {
+    std::istringstream iss(text);
+    std::string word;
+
+    while (iss >> word) {
+        
+        word.erase(remove_if*
 
 using namespace ImGui;
 
